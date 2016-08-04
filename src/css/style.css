@@ -1,0 +1,26 @@
+body {
+  animation: bg-slide 99999s linear infinite;
+  background-image: url("../images/polkadots.jpg");
+  background-size: 200px 200px;
+}
+
+.jokeRow {
+  padding-top: 30px;
+  animation: slide 1s linear;
+  width: 100vw;
+}
+
+@media only screen and (min-width : 998px) {
+  .jokeRow {
+    display: table;
+  }
+}
+
+@keyframes bg-slide {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: -5999999px -5999999px;
+  }
+}
