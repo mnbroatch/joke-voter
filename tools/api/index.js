@@ -1,8 +1,7 @@
-import { Router } from 'express';
+var Router = require('express').Router;
 const router = Router();
 
-import jokes from './jokes';
-import users from './users';
+var jokes = require('./jokes');
 
 router.use('/jokes', jokes);
 router.use('/users', users);
