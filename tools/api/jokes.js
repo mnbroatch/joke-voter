@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import Joke from '../db/Joke'
+var Router = require('express').Router;
+var Joke = require('../db/Joke)'
 
 const router = Router();
 
