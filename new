@@ -1,0 +1,1 @@
+$('.srp-actions').not(':has(>a[data-li-result-interaction="instant-connect")')

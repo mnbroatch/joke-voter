@@ -9,7 +9,7 @@ import TopJokes from './components/TopJokes';
 
 
 ReactDOM.render(
-  <Router history={hashHistory}>
+  <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Welcome} />
       <Route path="jokes" component={Jokes} />

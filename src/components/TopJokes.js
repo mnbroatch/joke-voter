@@ -1,12 +1,12 @@
 import React from 'react';
 
-import Joke from './Joke';
+import TopJoke from './TopJoke';
 import JokeActions from '../actions/JokeActions';
 
 import JokeStore from '../stores/JokeStore';
 
 import classnames from 'classnames';
-import css from '../css/style.css';
+import css from '../css/TopJoke.css';
 
 export default class TopJokes extends React.Component {
 
@@ -27,13 +27,13 @@ export default class TopJokes extends React.Component {
 
   render() {
     let jokes = this.state.topJokeArray.map((joke, idx) => {
-      return <Joke key={joke._id} handleVote={this.handleVote} index={idx} {...joke} />
-    })
+      return <TopJoke key={joke._id} handleVote={this.handleVote} index={idx} {...joke} />
+    });
 
     return (
-        <div>
+        <ul className={css.TopJokeList}>
           {jokes}
-        </div>
+        </ul>
     )
   }
 }

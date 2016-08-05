@@ -9,6 +9,10 @@ class JokeStore extends EventEmitter {
 
     AppDispatcher.register(action => {
       switch(action.actionType) {
+        case 'RESOLVE_FLAG':
+          _jokes = action.jokes;
+          this.emit('CHANGE');
+          break;
         case 'RESOLVE_VOTE':
           _jokes = action.jokes;
           this.emit('CHANGE');

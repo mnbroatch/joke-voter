@@ -32,7 +32,7 @@ router.get('/top', Joke.repopulateDb, (req, res) =>
 
 router.put('/flag/:id', (req, res) =>
   Joke.addFlag(req.params.id)
-    .then(joke=> res.send(joke))
+    .then(jokes => res.send(jokes))
     .catch(err => res.status(400).send(err))
 )
 

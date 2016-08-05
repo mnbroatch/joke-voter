@@ -1,0 +1,58 @@
+.exampleEnter,
+.exampleLeave,
+.exampleAppear {
+  position:absolute;
+}
+
+.exampleAppear {
+  min-width:45vw;
+}
+
+.exampleAppear.exampleAppearActive {
+  min-width:45vw;
+  transform: translateX(100vw);
+  transition: all 1s linear;
+}
+
+.exampleEnter {
+  transform: translateX(100vw);
+}
+
+.exampleEnter.exampleEnterActive {
+  min-width:45vw;
+  transform: translateX(0);
+  transition: all 1s .25s linear;
+}
+
+.exampleLeave {
+  transform: translateX(0);
+  transition: all 1s linear;
+}
+
+.exampleLeave.exampleLeaveActive {
+  transform: translateX(-100vw);
+}
+
+.box {
+  display: none;
+  position: absolute;
+  top: 20%;
+  background-image: url("../images/chatteringteeth.gif");
+  background-repeat: no-repeat;
+  background-size: 400px 400px;
+  width: 400px;
+  height: 400px;
+  z-index: 2;
+}
+
+.box.exampleEnter.exampleEnterActive {
+  display: block;
+  transform: translateX(-400px);
+  transition: all 1s linear;
+}
+
+.exampleEnter {
+  display: block;
+  transform: translateX(100vw);
+}
+
