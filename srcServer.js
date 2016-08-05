@@ -3,7 +3,6 @@ var path = require('path');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var config = require('../webpack.config');
 var mongoose = require('mongoose');
 
 var api = require('./api');
