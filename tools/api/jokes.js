@@ -15,7 +15,7 @@ router.get('/seed', (req, res) => {
 })
 
 router.get('/random', Joke.repopulateDb, (req, res) => {
-  let source = req.query.source;
+  var source = req.query.source;
   Joke.getRandom(source)
     .then(jokes => {
       res.send(jokes)})
@@ -37,7 +37,7 @@ router.put('/flag/:id', (req, res) =>
 )
 
 router.put('/vote', (req, res) => {
-  let voteObj = req.body;
+  var voteObj = req.body;
   Joke.resolveVote(voteObj)
     .then(newJokes => {
       res.send(newJokes)
