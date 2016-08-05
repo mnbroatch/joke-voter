@@ -6,4 +6,3 @@ var jokes = require('./jokes');
 router.use('/jokes', jokes);
 router.use('/users', users);
 
-export default router;
