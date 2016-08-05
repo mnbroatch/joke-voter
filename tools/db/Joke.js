@@ -2,13 +2,13 @@ var mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const request = require('request');
+var request = require('request');
 
-const JOKES_TO_FETCH = 20;
-const MINIMUM_UNVIEWED_JOKES = 10;
-const NUM_TOP_JOKES = 10;
+var JOKES_TO_FETCH = 20;
+var MINIMUM_UNVIEWED_JOKES = 10;
+var NUM_TOP_JOKES = 10;
 
-const jokeSchema = new mongoose.Schema({
+var jokeSchema = new mongoose.Schema({
   title: { type: String, required: true },
   body: { type: String, required: true },
   wins: { type: Number, required: true },
@@ -41,16 +41,16 @@ jokeSchema.statics.getRandomOld = function getRandomOld() {
       if (count < 2)
         return this.getRandomNew();
 
-      let random1 = Math.floor(Math.random() * count)
-      let random2 = Math.floor(Math.random() * count)
+      var random1 = Math.floor(Math.random() * count)
+      var random2 = Math.floor(Math.random() * count)
 
       //  need two random numbers that aren't equal
       while (random1 == random2 && count >= 2){
         random1 = Math.floor(Math.random() * count)
       }
 
-      let jokePromise1 = Joke.findOne({ votes: { $gt: 0 } }).skip(random1).exec();
-      let jokePromise2 = Joke.findOne({ votes: { $gt: 0 } }).skip(random2).exec();
+      var jokePromise1 = Joke.findOne({ votes: { $gt: 0 } }).skip(random1).exec();
+      var jokePromise2 = Joke.findOne({ votes: { $gt: 0 } }).skip(random2).exec();
       return Promise.all([jokePromise1, jokePromise2]);
     })
     .catch(err => {
@@ -61,16 +61,16 @@ jokeSchema.statics.getRandomOld = function getRandomOld() {
 jokeSchema.statics.getRandomNew = function getRandomNew() {
   return this.count({ votes: 0 })
     .then(count => {
-      let random1 = Math.floor(Math.random() * count)
-      let random2 = Math.floor(Math.random() * count)
+      var random1 = Math.floor(Math.random() * count)
+      var random2 = Math.floor(Math.random() * count)
 
       //  need two random numbers that aren't equal
       while (random1 == random2 && count >= 2){
         random1 = Math.floor(Math.random() * count)
       }
 
-      let jokePromise1 = Joke.findOne({ votes: 0 }).skip(random1).exec();
-      let jokePromise2 = Joke.findOne({ votes: 0 }).skip(random2).exec();
+      var jokePromise1 = Joke.findOne({ votes: 0 }).skip(random1).exec();
+      var jokePromise2 = Joke.findOne({ votes: 0 }).skip(random2).exec();
       return Promise.all([jokePromise1, jokePromise2], (err,stuff) => {
       });
     })
@@ -123,14 +123,14 @@ jokeSchema.statics.removeBadJokes = function removeBadJokes() {
 }
 
 jokeSchema.statics.addJokesFromReddit = function addJokesFromReddit() {
-  for (let i = 0; i < JOKES_TO_FETCH; i++) {
+  for (var i = 0; i < JOKES_TO_FETCH; i++) {
     this.addOneJokeFromReddit()
   }
 };
 
 jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
   console.log('Joke model 131 trying to add');
-  let url = 'http://reddit.com/r/jokes/random.json';
+  var url = 'http://reddit.com/r/jokes/random.json';
   request(url, (error, response, body) => {
     if (error){
       console.log('Joke model 136 error',error);
@@ -143,7 +143,7 @@ jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
       return console.log(e);
     }
 
-    let joke = {
+    var joke = {
       title: body[0].data.children[0].data.title,
       body: body[0].data.children[0].data.selftext_html,
       wins: 0,
@@ -169,7 +169,7 @@ jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
 };
 
 jokeSchema.statics.resolveVote = function resolveVote(voteObj) {
-  let winnerPromise = Joke.findById(voteObj.winner, (err, winner) => {
+  var winnerPromise = Joke.findById(voteObj.winner, (err, winner) => {
     if(winner) {
       winner.wins++;
       return winner.save();
@@ -178,7 +178,7 @@ jokeSchema.statics.resolveVote = function resolveVote(voteObj) {
     }
 
   });
-  let loserPromise = Joke.findById(voteObj.loser, (err, loser) => {
+  var loserPromise = Joke.findById(voteObj.loser, (err, loser) => {
     if(loser) {
       loser.losses++;
       return loser.save();
@@ -201,7 +201,7 @@ jokeSchema.statics.addFlag = function addFlag(jokeId) {
     });
 };
 
-const Joke = mongoose.model('Joke', jokeSchema);
+var Joke = mongoose.model('Joke', jokeSchema);
 
 export default Joke;
 
