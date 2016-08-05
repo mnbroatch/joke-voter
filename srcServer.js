@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
 
-var api = require('./api');
+var api = require('./tools/api');
 
 const PORT = 3000;
 const app = express();
