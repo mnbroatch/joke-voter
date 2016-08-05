@@ -1,7 +1,7 @@
 var Router = require('express').Router;
 var Joke = require('../db/Joke')
 
-const router = Router();
+let router = Router();
 
 router.get('/', (req, res) => {
   Joke.find({})
