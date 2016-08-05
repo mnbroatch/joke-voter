@@ -1,4 +1,5 @@
-import mongoose, { Schema } from 'mongoose';
+var mongoose = require('mongoose');
+
 mongoose.Promise = global.Promise;
 
 const request = require('request');
