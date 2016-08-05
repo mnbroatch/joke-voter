@@ -203,5 +203,3 @@ jokeSchema.statics.addFlag = function addFlag(jokeId) {
 
 var Joke = mongoose.model('Joke', jokeSchema);
 
-export default Joke;
-
