@@ -1,8 +1,8 @@
 import React from 'react';
 import Welcome from './Welcome';
 import Navbar from './Navbar';
-import classnames from 'classnames';
 
+import classnames from 'classnames';
 import trans from '../css/Transition.css';
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group')
 
