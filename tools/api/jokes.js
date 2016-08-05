@@ -1,5 +1,5 @@
 var Router = require('express').Router;
-var Joke = require('../db/Joke)'
+var Joke = require('../db/Joke')
 
 const router = Router();
 
