@@ -1,5 +1,7 @@
-import { post, get, ajax } from 'jquery';
-import ServerActions from './actions/ServerActions';
+let post = require('jquery').post
+let get = require('jquery').get
+let ajax = require('jquery').ajax
+var ServerActions = require('../src/actions/ServerActions');
 
 const API = {
 
