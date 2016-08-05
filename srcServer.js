@@ -1,13 +1,13 @@
-import express from 'express';
-import path from 'path';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import webpack from 'webpack';
-import config from '../webpack.config';
-import mongoose from 'mongoose';
+var express = require('express');
+var path = require('path');
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var webpack = require('webpack');
+var config = require('../webpack.config');
+var mongoose = require('mongoose');
 
-import api from './api';
+var api = require('./api');
 
 const PORT = 3000;
 const app = express();
