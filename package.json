@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "webpack-dev-server --port 3000 --inline --hot --content-base build/",
+    "start": "./src/components/App.js",
+    "build": "webpack --config ./webpack.config.js --progress --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
