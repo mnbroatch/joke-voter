@@ -2,16 +2,6 @@
   margin-bottom: 150px;
 }
 
-.jokeTitle {
-  width:95%;
-  padding: 8px;
-  color: white;
-  background-color: #26547C;
-  font-size: 1.3em;
-  position: relative;
-  top: 8px;
-}
-
 .jokeCol:nth-child(odd)>div>.jokeTitle {
   transform: rotate(-2deg);
 }
@@ -20,12 +10,29 @@
   transform: rotate(2deg);
 }
 
+.jokeDisplay {
+}
+
+.jokeTitle {
+  width:95%;
+  padding: 8px;
+  color: white;
+  background-color: #26547C;
+  font-size: 1.3em;
+  position: relative;
+  top: 8px;
+  box-shadow: 3px 3px 8px 0 rgba(0, 0, 0, 0.6);
+}
+
 .jokeBody {
+  width: 100%;
   font-size: 1.2em;
   background-color: #DF9A57;
   padding: 30px;
   margin-bottom:10px;
   border-radius: 17px;
+  box-shadow: 3px 3px 8px 0 rgba(0, 0, 0, 0.6);
+  transition: all 2s ease;
 }
 
 .voteButton {
@@ -40,6 +47,7 @@
   left: 50%;
   background-color: #00EA94;
   transform: translateX(-50%);
+  box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.6);
 }
 
 .flagButton {
@@ -49,14 +57,21 @@
   bottom: -130px;
   left: 50%;
   transform: translateX(-50%);
+  box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.6);
 }
 
-@media only screen and (min-width : 998px) {
+@media only screen and (min-width : 992) {
   .jokeCol {
-    width:45%;
+    width:50%;
     float: none;
     display: table-cell;
     vertical-align: middle;
+  }
+}
+
+@media only screen and (max-width : 992) {
+  .jokeBody {
+    min-width: 200vw;
   }
 }
 

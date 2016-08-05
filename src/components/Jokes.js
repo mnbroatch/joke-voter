@@ -5,6 +5,7 @@ import JokeActions from '../actions/JokeActions';
 
 import JokeStore from '../stores/JokeStore';
 
+
 import classnames from 'classnames';
 import css from '../css/style.css';
 
@@ -31,11 +32,11 @@ export default class Jokes extends React.Component {
   }
 
   componentDidMount() {
+    JokeActions.getRandomJokes(this.state.jokeSource);
     JokeStore.startListening(this._onChange);
   }
 
-  componentWillMount() {
-    JokeActions.getRandomJokes(this.state.jokeSource);
+  componentWillUnmount() {
     JokeStore.stopListening(this._onChange);
   }
 
@@ -53,18 +54,24 @@ export default class Jokes extends React.Component {
       loser: loserId,
       source: this.state.jokeSource,
     }
-    console.log(this.state.jokeSource);
-    JokeActions.resolveVote(voteObj)
+    JokeActions.resolveVote(voteObj);
+  }
+
+  handleFlag(jokeId) {
+    JokeActions.resolveFlag(jokeId);
   }
 
   render() {
-    console.log(css)
     let jokes = this.state.jokeArray.map((joke, idx) => {
-      return <Joke key={joke._id} handleVote={this.handleVote} index={idx} {...joke} />
+      return <Joke key={joke._id} handleVote={this.handleVote} handleFlag={this.handleFlag} index={idx} {...joke} />
     })
 
     return (
-        <div className={css.jokeRow + " row"}>{jokes}</div>
+      <div className="container-fluid">
+        <div className={css.jokeRow + " row m-x-auto"}>
+          {jokes}
+        </div>
+      </div>
     )
   }
 }

@@ -16,6 +16,18 @@ const API = {
           });
       })
   },
+  resolveFlag(_id) {
+    ajax({ 
+      url: `/api/jokes/flag/${_id}`,
+      type: 'PUT',
+    })
+      .done(response => {
+        get(`/api/jokes/random?source=old`)
+          .done(jokes => {
+            ServerActions.resolveFlag(jokes) 
+          });
+      })
+  },
   getAllJokes() {
     get('/api/jokes')
       .done(response => {

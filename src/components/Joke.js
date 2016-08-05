@@ -1,5 +1,6 @@
 import React from 'react';
 import JokeActions from '../actions/JokeActions';
+import FlagModal from './FlagModal';
 
 import classnames from 'classnames';
 import css from '../css/Joke.css';
@@ -9,7 +10,8 @@ export default class Joke extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onClick = this.onClick.bind(this);
+    this.onVote = this.onVote.bind(this);
+    this.onFlag = this.onFlag.bind(this);
   }
 
   removeJoke(_id) {
@@ -28,8 +30,12 @@ export default class Joke extends React.Component {
     this.setState({ joke });
   }
 
-  onClick() {
+  onVote() {
     this.props.handleVote(this.props.index);
+  }
+
+  onFlag() {
+    this.props.handleFlag(this.props._id);
   }
 
   render() {
@@ -37,21 +43,17 @@ export default class Joke extends React.Component {
 
     return (
       <div className={css.jokeCol + " col-md-6"}>
-
-        <div className={css.jokeDisplay}>
+        <div className={css.jokeDisplay} style={{minWidth: "45vw"}}>
           <div className={css.jokeTitle}>
             <b>{this.props.title}</b>
           </div>
           <div className={css.jokeBody} dangerouslySetInnerHTML={jokeBody}>
           </div>
         </div>
-
-        <button className={ css.voteButton } onClick={ this.onClick }>
+        <button className={ css.voteButton } onClick={ this.onVote }>
           This one's funnier!
         </button>
-        <button className={css.flagButton + " btn btn-danger"}>
-          Flag this Joke <span className="glyphicon glyphicon-flag" aria-hidden="true"></span>
-        </button>
+        <FlagModal handleFlag={this.onFlag} onVote={ this.onVote } />
       </div>
     )
   }

@@ -8,6 +8,9 @@ const JokeActions = {
   resolveVote(voteObj) {
     API.resolveVote(voteObj);
   },
+  resolveFlag(_id) {
+    API.resolveFlag(_id);
+  },
   getTopJokes() {
     return API.getTopJokes();
   },

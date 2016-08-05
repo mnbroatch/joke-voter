@@ -2,17 +2,21 @@ body {
   animation: bg-slide 99999s linear infinite;
   background-image: url("../images/polkadots.jpg");
   background-size: 200px 200px;
+  padding-bottom: 200px;
 }
 
 .jokeRow {
-  padding-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
   animation: slide 1s linear;
-  width: 100vw;
 }
 
-@media only screen and (min-width : 998px) {
+@media only screen and (min-width : 992px) {
   .jokeRow {
     display: table;
+    width:100%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

@@ -128,9 +128,11 @@ jokeSchema.statics.addJokesFromReddit = function addJokesFromReddit() {
 };
 
 jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
+  console.log('Joke model 131 trying to add');
   let url = 'http://reddit.com/r/jokes/random.json';
   request(url, (error, response, body) => {
     if (error){
+      console.log('Joke model 136 error',error);
       return addOneJokeFromReddit();
     }
     try{
@@ -153,7 +155,7 @@ jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
       if (!foundJoke) {
         return Joke.create(joke)
           .then(joke => {
-    console.log('model 149 joke added');
+            console.log('model 149 joke added');
           })
           .catch(err => {
             console.log(err);

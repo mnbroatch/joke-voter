@@ -7,6 +7,12 @@ const ServerActions = {
       jokes,
     });
   },
+  resolveFlag(jokes) {
+    AppDispatcher.dispatch({
+      actionType: 'RESOLVE_FLAG',
+      jokes,
+    });
+  },
   getRandomJokes(jokes) {
     AppDispatcher.dispatch({
       actionType: 'RETRIEVE_RANDOM_JOKES',
