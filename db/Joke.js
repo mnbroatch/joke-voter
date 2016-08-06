@@ -1,6 +1,7 @@
 "use strict";
 
 const mongoose = require('mongoose');
+
 mongoose.Promise = global.Promise;
 
 const request = require('request');
@@ -126,6 +127,7 @@ jokeSchema.statics.removeBadJokes = function removeBadJokes() {
 }
 
 jokeSchema.statics.addJokesFromReddit = function addJokesFromReddit() {
+  console.log('seeding');
   if (!isFetchingFromReddit) {
     isFetchingFromReddit = true;
     let jokePromiseArray = []
@@ -227,14 +229,15 @@ function addJokeArrayToDb(jokes) {
   return Joke.create(jokes)
     .then(joke1 => {
       console.log('model 149 jokes added');
+      isFetchingFromReddit = false;
     })
     .catch(err => {
-      reject();
-      resolve();
       console.log(err);
+      isFetchingFromReddit = false;
     })
 }
 
 
 const Joke = mongoose.model('Joke', jokeSchema);
+
 module.exports = Joke;
