@@ -1,11 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
+
 mongoose.Promise = global.Promise;
 
 const request = require('request');
 
-const JOKES_TO_FETCH = 20;
-const MINIMUM_UNVIEWED_JOKES = 10;
+const JOKES_TO_FETCH = 8;
+const MINIMUM_UNVIEWED_JOKES = 2;
 const NUM_TOP_JOKES = 10;
+
+let isFetchingFromReddit = false;
 
 const jokeSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -122,50 +125,69 @@ jokeSchema.statics.removeBadJokes = function removeBadJokes() {
 }
 
 jokeSchema.statics.addJokesFromReddit = function addJokesFromReddit() {
-  for (let i = 0; i < JOKES_TO_FETCH; i++) {
-    this.addOneJokeFromReddit()
+  console.log('seeding');
+  if (!isFetchingFromReddit) {
+    isFetchingFromReddit = true;
+    let jokePromiseArray = []
+    for (let i = 0; i < JOKES_TO_FETCH; i++) {
+      jokePromiseArray.push(this.getOneJokeFromReddit())
+    }
+    return Promise.all(jokePromiseArray)
+      .then(jokes => {
+
+        let uniqueJokes = [];
+
+        for (let joke of jokes) {
+          if (!uniqueJokes.some(uniqueJoke => uniqueJoke.body == joke.body)) {
+            uniqueJokes.push(joke);
+          }
+        }
+        console.log('uniqueJokes',uniqueJokes);
+        return addJokeArrayToDb(uniqueJokes);
+      })
+      .catch(err => {
+        console.log('jokes fetch fail');
+        console.log(err);
+      });
   }
 };
 
-jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
-  console.log('Joke model 131 trying to add');
+jokeSchema.statics.getOneJokeFromReddit = function getOneJokeFromReddit() {
   let url = 'http://reddit.com/r/jokes/random.json';
-  request(url, (error, response, body) => {
-    if (error){
-      console.log('Joke model 136 error',error);
-      return addOneJokeFromReddit();
-    }
-    try{
-      body = JSON.parse(body);
-    }
-    catch (e){
-      return console.log(e);
-    }
-
-    let joke = {
-      title: body[0].data.children[0].data.title,
-      body: body[0].data.children[0].data.selftext_html,
-      wins: 0,
-      losses: 0,
-      votes: 0,
-      ratio: 0,
-      flags: 0,
-    };
-    Joke.find({body: joke.body}, foundJoke => {
-      if (!foundJoke) {
-        return Joke.create(joke)
-          .then(joke => {
-            console.log('model 149 joke added');
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      } else {
-        Joke.addOneJokeFromReddit();
+  return new Promise((resolve,reject) => {
+    request(url, (error, response, body) => {
+      if (error){
+        console.log('Joke model 136 error',error);
+        return getOneJokeFromReddit();
       }
+
+      try{
+        body = JSON.parse(body);
+      }
+      catch (e){
+        return console.log(e);
+      }
+
+      let joke = {
+        title: body[0].data.children[0].data.title,
+        body: body[0].data.children[0].data.selftext_html,
+        wins: 0,
+        losses: 0,
+        votes: 0,
+        ratio: 0,
+        flags: 0,
+      };
+      Joke.find({body: joke.body}, foundJoke => {
+        if (!foundJoke) {
+          return resolve(joke);
+        } else {
+          Joke.getOneJokeFromReddit();
+        }
+      });
     });
   });
 };
+
 
 jokeSchema.statics.resolveVote = function resolveVote(voteObj) {
   let winnerPromise = Joke.findById(voteObj.winner, (err, winner) => {
@@ -199,6 +221,20 @@ jokeSchema.statics.addFlag = function addFlag(jokeId) {
       }
     });
 };
+
+
+function addJokeArrayToDb(jokes) {
+  return Joke.create(jokes)
+    .then(joke1 => {
+      console.log('model 149 jokes added');
+      isFetchingFromReddit = false;
+    })
+    .catch(err => {
+      console.log(err);
+      isFetchingFromReddit = false;
+    })
+}
+
 
 const Joke = mongoose.model('Joke', jokeSchema);
 
