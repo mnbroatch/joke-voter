@@ -1,13 +1,12 @@
 "use strict";
 
 const mongoose = require('mongoose');
-
 mongoose.Promise = global.Promise;
 
 const request = require('request');
 
 const JOKES_TO_FETCH = 8;
-const MINIMUM_UNVIEWED_JOKES = 2;
+const MINIMUM_UNVIEWED_JOKES = 3;
 const NUM_TOP_JOKES = 10;
 
 let isFetchingFromReddit = false;
@@ -85,9 +84,12 @@ jokeSchema.statics.getRandomNew = function getRandomNew() {
 
 jokeSchema.statics.getTop = function getTop() {
   return Joke.find({ votes: { $gt: 0 } })
-    .sort({ ratio: -1})
+    .sort({ ratio: -1, votes: -1})
     .limit(NUM_TOP_JOKES)
-    .exec();
+    .exec(stuff => {
+      console.log(stuff); 
+    }
+    );
 }
 
 jokeSchema.statics.repopulateDb = function repopulateDb(req, res, next) {
@@ -117,7 +119,7 @@ jokeSchema.statics.repopulateDb = function repopulateDb(req, res, next) {
 
 jokeSchema.statics.removeBadJokes = function removeBadJokes() {
   return Joke.find({ votes: { $gt: 0 } })
-    .sort({ votes: -1, ratio: 1})
+    .sort({ ratio: 1, votes: -1 })
     .limit(JOKES_TO_FETCH)
     .exec((err,stuff) => {
       stuff.forEach(el => {
@@ -164,9 +166,11 @@ jokeSchema.statics.getOneJokeFromReddit = function getOneJokeFromReddit() {
       }
 
       try{
+        console.log('body',body);
         body = JSON.parse(body);
       }
       catch (e){
+        isFetchingFromReddit = false;
         return console.log(e);
       }
 
