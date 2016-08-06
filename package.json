@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "./src/components/App.js",
+    "start": "node srcServer.js",
     "build": "webpack --config ./webpack.config.js --progress --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
