@@ -1,14 +1,15 @@
-var mongoose = require('mongoose');
-
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-var request = require('request');
+const request = require('request');
 
-var JOKES_TO_FETCH = 20;
-var MINIMUM_UNVIEWED_JOKES = 10;
-var NUM_TOP_JOKES = 10;
+const JOKES_TO_FETCH = 10;
+const MINIMUM_UNVIEWED_JOKES = 10;
+const NUM_TOP_JOKES = 10;
 
-var jokeSchema = new mongoose.Schema({
+let isFetchingFromReddit = false;
+
+const jokeSchema = new mongoose.Schema({
   title: { type: String, required: true },
   body: { type: String, required: true },
   wins: { type: Number, required: true },
@@ -41,16 +42,16 @@ jokeSchema.statics.getRandomOld = function getRandomOld() {
       if (count < 2)
         return this.getRandomNew();
 
-      var random1 = Math.floor(Math.random() * count)
-      var random2 = Math.floor(Math.random() * count)
+      let random1 = Math.floor(Math.random() * count)
+      let random2 = Math.floor(Math.random() * count)
 
       //  need two random numbers that aren't equal
       while (random1 == random2 && count >= 2){
         random1 = Math.floor(Math.random() * count)
       }
 
-      var jokePromise1 = Joke.findOne({ votes: { $gt: 0 } }).skip(random1).exec();
-      var jokePromise2 = Joke.findOne({ votes: { $gt: 0 } }).skip(random2).exec();
+      let jokePromise1 = Joke.findOne({ votes: { $gt: 0 } }).skip(random1).exec();
+      let jokePromise2 = Joke.findOne({ votes: { $gt: 0 } }).skip(random2).exec();
       return Promise.all([jokePromise1, jokePromise2]);
     })
     .catch(err => {
@@ -61,16 +62,16 @@ jokeSchema.statics.getRandomOld = function getRandomOld() {
 jokeSchema.statics.getRandomNew = function getRandomNew() {
   return this.count({ votes: 0 })
     .then(count => {
-      var random1 = Math.floor(Math.random() * count)
-      var random2 = Math.floor(Math.random() * count)
+      let random1 = Math.floor(Math.random() * count)
+      let random2 = Math.floor(Math.random() * count)
 
       //  need two random numbers that aren't equal
       while (random1 == random2 && count >= 2){
         random1 = Math.floor(Math.random() * count)
       }
 
-      var jokePromise1 = Joke.findOne({ votes: 0 }).skip(random1).exec();
-      var jokePromise2 = Joke.findOne({ votes: 0 }).skip(random2).exec();
+      let jokePromise1 = Joke.findOne({ votes: 0 }).skip(random1).exec();
+      let jokePromise2 = Joke.findOne({ votes: 0 }).skip(random2).exec();
       return Promise.all([jokePromise1, jokePromise2], (err,stuff) => {
       });
     })
@@ -123,53 +124,69 @@ jokeSchema.statics.removeBadJokes = function removeBadJokes() {
 }
 
 jokeSchema.statics.addJokesFromReddit = function addJokesFromReddit() {
-  for (var i = 0; i < JOKES_TO_FETCH; i++) {
-    this.addOneJokeFromReddit()
+  if (!isFetchingFromReddit) {
+    isFetchingFromReddit = true;
+    let jokePromiseArray = []
+    for (let i = 0; i < JOKES_TO_FETCH; i++) {
+      jokePromiseArray.push(this.addOneJokeFromReddit())
+    }
+    Promise.all(jokePromiseArray)
+      .then(() => {
+        console.log('all done');
+        isFetchingFromReddit = false;
+      })
+      .catch(err => {
+        console.log('jokes fetch fail');
+      });
   }
 };
 
 jokeSchema.statics.addOneJokeFromReddit = function addOneJokeFromReddit() {
-  console.log('Joke model 131 trying to add');
-  var url = 'http://reddit.com/r/jokes/random.json';
-  request(url, (error, response, body) => {
-    if (error){
-      console.log('Joke model 136 error',error);
-      return addOneJokeFromReddit();
-    }
-    try{
-      body = JSON.parse(body);
-    }
-    catch (e){
-      return console.log(e);
-    }
-
-    var joke = {
-      title: body[0].data.children[0].data.title,
-      body: body[0].data.children[0].data.selftext_html,
-      wins: 0,
-      losses: 0,
-      votes: 0,
-      ratio: 0,
-      flags: 0,
-    };
-    Joke.find({body: joke.body}, foundJoke => {
-      if (!foundJoke) {
-        return Joke.create(joke)
-          .then(joke => {
-            console.log('model 149 joke added');
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      } else {
-        Joke.addOneJokeFromReddit();
+  let url = 'http://reddit.com/r/jokes/random.json';
+  console.log('fetching');
+  return new Promise((resolve,reject) => {
+    request(url, (error, response, body) => {
+      if (error){
+        console.log('Joke model 136 error',error);
+        return addOneJokeFromReddit();
       }
+      try{
+        body = JSON.parse(body);
+      }
+      catch (e){
+        return console.log(e);
+      }
+
+      let joke = {
+        title: body[0].data.children[0].data.title,
+        body: body[0].data.children[0].data.selftext_html,
+        wins: 0,
+        losses: 0,
+        votes: 0,
+        ratio: 0,
+        flags: 0,
+      };
+      Joke.find({body: joke.body}, foundJoke => {
+        if (!foundJoke) {
+          return Joke.create(joke)
+            .then(joke => {
+              resolve();
+              console.log('model 149 joke added');
+            })
+            .catch(err => {
+              reject();
+              console.log(err);
+            });
+        } else {
+          Joke.addOneJokeFromReddit();
+        }
+      });
     });
   });
 };
 
 jokeSchema.statics.resolveVote = function resolveVote(voteObj) {
-  var winnerPromise = Joke.findById(voteObj.winner, (err, winner) => {
+  let winnerPromise = Joke.findById(voteObj.winner, (err, winner) => {
     if(winner) {
       winner.wins++;
       return winner.save();
@@ -178,7 +195,7 @@ jokeSchema.statics.resolveVote = function resolveVote(voteObj) {
     }
 
   });
-  var loserPromise = Joke.findById(voteObj.loser, (err, loser) => {
+  let loserPromise = Joke.findById(voteObj.loser, (err, loser) => {
     if(loser) {
       loser.losses++;
       return loser.save();
@@ -201,6 +218,5 @@ jokeSchema.statics.addFlag = function addFlag(jokeId) {
     });
 };
 
-var Joke = mongoose.model('Joke', jokeSchema);
-
+const Joke = mongoose.model('Joke', jokeSchema);
 module.exports = Joke;
