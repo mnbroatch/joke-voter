@@ -3,11 +3,11 @@ var Joke = require('../db/Joke')
 
 var router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', (req, res) =>
   Joke.find({})
     .then(jokes => res.send(jokes))
     .catch(err => res.status(400).send(err))
-})
+)
 
 router.get('/seed', (req, res) => {
   Joke.addJokesFromReddit();
