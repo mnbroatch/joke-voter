@@ -5,10 +5,10 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
 
-var api = require('./tools/api');
+var api = require('./api');
 
-const PORT = 3000;
-const app = express();
+var PORT = 3000;
+var app = express();
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/jokevote', (err) => {
   console.log(err || 'Mongoose connected!');
@@ -19,10 +19,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use(express.static(path.join(__dirname, '/build')));
+
 app.use('/api', api);
 
 app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, '../build/index.html'));
+  res.sendFile(path.join(__dirname, './build/index.html'));
 });
 
 app.listen(PORT, err => {
