@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 
 var api = require('./api');
 
-var PORT = 3000; 
+var PORT = process.env.PORT || 3000; 
 var app = express();
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/jokevote', (err) => {
